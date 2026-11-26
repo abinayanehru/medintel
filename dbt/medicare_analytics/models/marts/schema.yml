@@ -1,0 +1,38 @@
+
+version: 2
+
+models:
+  - name: mart_generic_opportunities
+    description: >
+      Threshold-filtered comparison of reported brand and generic
+      prescription costs. The estimated optimization metric is a
+      scenario estimate, not verified savings.
+
+    columns:
+      - name: generic_drug_name
+        description: Generic drug name used to group the comparison.
+        tests:
+          - not_null
+          - unique
+
+      - name: brand_claims
+        description: Aggregate brand-classified claims.
+        tests:
+          - not_null
+
+      - name: generic_claims
+        description: Aggregate generic-classified claims.
+        tests:
+          - not_null
+
+      - name: minimum_claims_per_category
+        description: Minimum claims required in each classification.
+        tests:
+          - not_null
+
+      - name: estimated_cost_optimization_opportunity
+        description: >
+          Scenario estimate based on the positive cost-per-claim
+          difference multiplied by brand claims.
+        tests:
+          - not_null
