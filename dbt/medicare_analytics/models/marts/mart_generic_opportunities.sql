@@ -1,9 +1,10 @@
+
 {{ config(materialized='table') }}
 
 WITH classified_drugs AS (
 
     SELECT
-        gnrc_name,
+        TRIM(gnrc_name) AS generic_drug_name,
         total_claims,
         total_drug_cost,
 
@@ -17,15 +18,18 @@ WITH classified_drugs AS (
 
     WHERE
         gnrc_name IS NOT NULL
+        AND TRIM(gnrc_name) <> ''
         AND brnd_name IS NOT NULL
+        AND TRIM(brnd_name) <> ''
         AND total_claims > 0
         AND total_drug_cost IS NOT NULL
+        AND total_drug_cost >= 0
 ),
 
 drug_cost_summary AS (
 
     SELECT
-        gnrc_name,
+        generic_drug_name,
 
         SUM(total_claims) FILTER (
             WHERE drug_type = 'Brand'
@@ -44,17 +48,32 @@ drug_cost_summary AS (
         ) AS generic_total_cost
 
     FROM classified_drugs
-    GROUP BY gnrc_name
+
+    GROUP BY generic_drug_name
+),
+
+eligible_drugs AS (
+
+    SELECT
+        *,
+        1000 AS minimum_claims_per_category
+
+    FROM drug_cost_summary
+
+    WHERE
+        brand_claims >= 1000
+        AND generic_claims >= 1000
 ),
 
 cost_comparison AS (
 
     SELECT
-        gnrc_name AS generic_drug_name,
+        generic_drug_name,
         brand_claims,
         generic_claims,
         brand_total_cost,
         generic_total_cost,
+        minimum_claims_per_category,
 
         brand_total_cost / NULLIF(brand_claims, 0)
             AS brand_cost_per_claim,
@@ -62,11 +81,7 @@ cost_comparison AS (
         generic_total_cost / NULLIF(generic_claims, 0)
             AS generic_cost_per_claim
 
-    FROM drug_cost_summary
-
-    WHERE
-        brand_claims > 0
-        AND generic_claims > 0
+    FROM eligible_drugs
 )
 
 SELECT
@@ -75,6 +90,8 @@ SELECT
     generic_claims,
     brand_total_cost,
     generic_total_cost,
+    minimum_claims_per_category,
+
     brand_cost_per_claim,
     generic_cost_per_claim,
 
@@ -86,6 +103,7 @@ SELECT
     GREATEST(
         brand_cost_per_claim - generic_cost_per_claim,
         0
-    ) * brand_claims AS estimated_cost_optimization_opportunity
+    ) * brand_claims
+        AS estimated_cost_optimization_opportunity
 
 FROM cost_comparison
