@@ -1,0 +1,54 @@
+
+Metric,Value,Unit,Status,Notes
+Python Version,3.11.9,version,Verified,Existing installation
+Git Version,2.54.0.windows.1,version,Verified,Existing installation
+RAM,8,GB,Verified,Hardware
+C Drive Free Space,9,GB,Verified,Before project setup
+D Drive Free Space Before Setup,43.5,GB,Verified,Before project setup
+D Drive Free Space Current,39.01,GB,Verified,After dataset extraction
+Dataset Year,2023,year,Verified,Medicare Part D Prescribers by Provider and Drug
+Source ZIP Size,657.84,MB,Verified,Downloaded archive
+Extracted CSV Size,3.61,GB,Verified,Main 2023 CSV
+Dataset Columns,22,columns,Verified,CSV header inspection
+Raw Dataset Rows,26794878,rows,Verified,Full source CSV profiled
+Processed Dataset Rows,0,rows,Pending,Awaiting Bronze ingestion
+Distinct Generic Drug Names,1779,names,Verified,Case-insensitive distinct count
+Brand Generic Same Name,18428364,rows,Verified,Name comparison only
+Brand Generic Different Name,8366514,rows,Verified,Name comparison only
+Invalid Numeric Values,0,values,Verified,Across 10 inspected numeric columns
+Data Processing Time,,seconds,Pending,Measure during ingestion and transformation
+Potential Savings,,USD,Pending,Requires validated savings model
+Data Quality Profile,reports/data_quality_profile.json,file,Verified,Full profiling report generated
+Iceberg Smoke Test Records,3,rows,Verified,Three records successfully written and read back
+SQLite Catalog Test,1,test,Verified,Local catalog connection successful
+Iceberg Table Creation,1,table,Verified,Test table created successfully
+PyArrow Write Read Test,Passed,status,Verified,Three records matched expected output
+Pure Python Avro Fallback,Working,status,Verified,Used because Windows blocked compiled decoder
+DuckDB Import,Blocked,status,Blocked,Windows Application Control policy
+DLT Iceberg Sample Records,1000,rows,Verified,Successfully read back from Iceberg
+DLT Iceberg Original CMS Columns,22,columns,Verified,All original source columns retained
+DLT Iceberg Total Columns,24,columns,Verified,Includes 2 dlt metadata columns
+DLT Iceberg Table Discovery,Passed,status,Verified,Found using dlt get_iceberg_tables helper
+DLT Iceberg Readback,Passed,status,Verified,1000 records read through PyArrow
+DLT Avro Pure Python Fallback,Working,status,Verified,Windows Application Control workaround
+DLT Sample Records,1000,rows,Verified,Fresh extraction and successful Iceberg read-back
+DLT Sample Source Columns,22,columns,Verified,All original CMS columns retained
+DLT Sample Total Columns,24,columns,Verified,Includes 2 dlt metadata columns
+DLT Pipeline Run Duration,2.17,seconds,Verified,Measured around pipeline.run
+DLT Load Step Duration,1.84,seconds,Verified,Reported by dlt
+DLT Failed Load Jobs,0,jobs,Verified,Load package completed successfully
+DLT Iceberg Readback,Passed,status,Verified,1000 records read through PyArrow
+
+Record these actual values:
+Metric	Value	Status
+Processed Dataset Rows	26,794,878	Verified
+Production Batches	1,072	Verified
+Production Duration	129.37 minutes	Verified
+Average Throughput	3,452 rows/sec	Verified
+Iceberg Data Files	1,072	Verified
+Iceberg Records	26,794,878	Verified
+Production Batches,1072,batches,Verified,25,000-record batch ingestion
+Production Ingestion Duration,129.37,minutes,Verified,Full CMS dataset ingestion
+Average Ingestion Throughput,3452,rows/sec,Verified,Measured production throughput
+Iceberg Production Data Files,1072,files,Verified,Parquet data files
+Iceberg Production Records,26794878,rows,Verified,Latest Iceberg snapshot

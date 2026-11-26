@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: stg_prescriber_drug
+    description: "Cleaned staging view of the 2023 CMS Medicare Part D prescriber-drug dataset."
+
+    columns:
+      - name: prscrbr_npi
+        tests:
+          - not_null
+
+      - name: brnd_name
+        tests:
+          - not_null
+
+      - name: gnrc_name
+        tests:
+          - not_null
+
+      - name: total_claims
+        tests:
+          - not_null

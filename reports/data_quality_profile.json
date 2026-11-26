@@ -1,0 +1,97 @@
+{
+    "file": "data\\raw\\2023\\Medicare_Part_D_2023.csv",
+    "file_size_bytes": 3877447342,
+    "total_records": 26794878,
+    "missing_values": {
+        "Tot_Benes": 14757509,
+        "GE65_Tot_Clms": 12070819,
+        "GE65_Tot_30day_Fills": 12070819,
+        "GE65_Tot_Drug_Cst": 12070819,
+        "GE65_Tot_Day_Suply": 12070819,
+        "GE65_Tot_Benes": 23700772,
+        "GE65_Sprsn_Flag": 14724059,
+        "GE65_Bene_Sprsn_Flag": 3094106,
+        "Prscrbr_Type": 2,
+        "Prscrbr_State_FIPS": 1
+    },
+    "numeric_statistics": {
+        "Tot_Clms": {
+            "valid": 26794878,
+            "invalid": 0,
+            "min": 11.0,
+            "max": 285496.0
+        },
+        "Tot_30day_Fills": {
+            "valid": 26794878,
+            "invalid": 0,
+            "min": 11.0,
+            "max": 285620.3
+        },
+        "Tot_Day_Suply": {
+            "valid": 26794878,
+            "invalid": 0,
+            "min": 8.0,
+            "max": 1092131.0
+        },
+        "Tot_Drug_Cst": {
+            "valid": 26794878,
+            "invalid": 0,
+            "min": 0.0,
+            "max": 81776016.73
+        },
+        "Tot_Benes": {
+            "valid": 12037369,
+            "invalid": 0,
+            "min": 11.0,
+            "max": 258456.0
+        },
+        "GE65_Tot_Clms": {
+            "valid": 14724059,
+            "invalid": 0,
+            "min": 0.0,
+            "max": 269729.0
+        },
+        "GE65_Tot_30day_Fills": {
+            "valid": 14724059,
+            "invalid": 0,
+            "min": 0.0,
+            "max": 269842.3
+        },
+        "GE65_Tot_Drug_Cst": {
+            "valid": 14724059,
+            "invalid": 0,
+            "min": 0.0,
+            "max": 80498968.76
+        },
+        "GE65_Tot_Day_Suply": {
+            "valid": 14724059,
+            "invalid": 0,
+            "min": 0.0,
+            "max": 1076861.0
+        },
+        "GE65_Tot_Benes": {
+            "valid": 3094106,
+            "invalid": 0,
+            "min": 0.0,
+            "max": 254442.0
+        }
+    },
+    "flag_distributions": {
+        "GE65_Sprsn_Flag": {
+            "#": 8893902,
+            "<BLANK>": 14724059,
+            "*": 3176917
+        },
+        "GE65_Bene_Sprsn_Flag": {
+            "*": 15844651,
+            "#": 7856121,
+            "<BLANK>": 3094106
+        }
+    },
+    "brand_generic_comparison": {
+        "same_name": 18428364,
+        "different_name": 8366514,
+        "missing_name": 0
+    },
+    "distinct_generic_names": 1779
+}
