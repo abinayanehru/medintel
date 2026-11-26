@@ -50,5 +50,5 @@ SELECT
         AS ge65_total_beneficiaries
 
 FROM iceberg_scan(
-    's3://medicare-lakehouse/dlt/medicare_2023/prescriber_drug/metadata/01072-7156d2df-90dc-41ba-8145-339ee6089a83.metadata.json'
+    '{{ env_var("MEDICARE_ICEBERG_METADATA_PATH") }}'
 )
