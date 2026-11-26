@@ -7,7 +7,7 @@ models:
       Threshold-filtered comparison of reported brand and generic
       prescription costs. The estimated optimization metric is a
       scenario estimate, not verified savings.
-
+      
     columns:
       - name: generic_drug_name
         description: Generic drug name used to group the comparison.
