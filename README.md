@@ -3,34 +3,36 @@
 
 **Turning 26.8 million prescription records into healthcare cost insights.**
 
-An end-to-end healthcare analytics lakehouse built with Python, dlt, MinIO, Apache Iceberg, DuckDB, dbt Core, and Tableau Public.
+An end-to-end healthcare analytics lakehouse built using Python, dlt, MinIO, Apache Iceberg, DuckDB, dbt Core, and Tableau Public.
 
-[![Live Tableau Dashboard](https://img.shields.io/badge/Tableau-Public%20Dashboard-E97627?logo=tableau&logoColor=white)](https://public.tableau.com/app/profile/abinaya.n5599/viz/MedicarePartDAnalyticsPrescriptionCostGenericOptimization2023/MedicarePartDAnalytics)
+[![Tableau Public](https://img.shields.io/badge/Tableau-Public%20Dashboard-E97627?logo=tableau&logoColor=white)](https://public.tableau.com/app/profile/abinaya.n5599/viz/MedicarePartDAnalyticsPrescriptionCostGenericOptimization2023/MedicarePartDAnalytics)
 
-## Live dashboard
+## Live Dashboard
 
-**[Explore the interactive MedIntel dashboard on Tableau Public →](https://public.tableau.com/app/profile/abinaya.n5599/viz/MedicarePartDAnalyticsPrescriptionCostGenericOptimization2023/MedicarePartDAnalytics)**
+**[Explore the interactive MedIntel dashboard on Tableau Public](https://public.tableau.com/app/profile/abinaya.n5599/viz/MedicarePartDAnalyticsPrescriptionCostGenericOptimization2023/MedicarePartDAnalytics)**
 
-Four analytical views:
+The dashboard contains four analytical views:
 
-1. **Brand vs Generic Cost** — compares aggregate reported drug costs across the two name-based classifications.
-2. **Top 10 Drug Costs** — highlights drug names with the highest reported prescription costs.
-3. **Provider Analysis** — explores reported costs across provider states and specialties.
-4. **Generic Cost Optimization Opportunities** — ranks scenario-based generic cost comparisons.
+1. Brand vs Generic Cost
+2. Top 10 Drug Costs
+3. Provider Analysis
+4. Generic Cost Optimization Opportunities
 
-## Project overview
+## Project Overview
 
-MedIntel analyzes the **2023 CMS Medicare Part D Prescribers by Provider and Drug** dataset to explore prescription utilization, reported drug costs, brand-versus-generic patterns, and potential cost-optimization scenarios.
+MedIntel analyzes the 2023 CMS Medicare Part D Prescribers by Provider and Drug dataset.
 
-The pipeline ingests the source CSV in batches, stores it in an Iceberg table on S3-compatible object storage, transforms it with SQL and dbt, and exports analytical marts for Tableau Public.
+The project explores prescription utilization, reported drug costs, provider-level patterns, and brand-versus-generic cost comparisons.
 
-## Business questions
+The pipeline processes the source CSV in batches, stores the data in an Apache Iceberg table on MinIO, transforms it using DuckDB and dbt, and exports analytical marts for Tableau Public.
 
-- How do reported costs differ between records classified as brand and generic?
-- Which generic drug names are associated with the highest reported costs?
+## Business Questions
+
+- How do reported prescription costs differ between brand-classified and generic-classified records?
+- Which drug names have the highest reported prescription costs?
 - How do prescription costs vary across provider states and specialties?
-- Which drug names show a lower generic cost per claim than brand cost per claim?
-- What does a simple cost-difference scenario look like if brand claims were priced at the observed generic cost per claim?
+- Which drug names have lower generic-classified cost per claim than brand-classified cost per claim?
+- What would a simplified cost-difference scenario look like if brand claims were priced at the observed generic cost per claim?
 
 ## Architecture
 
@@ -48,122 +50,186 @@ flowchart TD
     J --> K["Tableau Public"]
 ```
 
-### Technology stack
+## Technology Stack
 
-| Layer | Technology | Role |
+| Layer | Technology | Purpose |
 |---|---|---|
-| Source | CMS Medicare Part D CSV (2023) | Provider-and-drug prescription data |
+| Source | CMS Medicare Part D CSV | Prescription provider-drug data |
 | Ingestion | Python, dlt | Batch ingestion |
-| Object storage | MinIO | S3-compatible storage |
+| Object storage | MinIO | S3-compatible object storage |
 | Table format | Apache Iceberg, PyIceberg | Table metadata and snapshots |
 | Catalog | SQLite | Local catalog metadata |
 | Query engine | DuckDB | Analytical SQL |
-| Transformation | dbt Core | Staging and marts |
-| Visualization | Tableau Public | Interactive dashboard |
-| Runtime | Docker Engine, Docker Compose, Ubuntu on WSL2 | Local infrastructure |
+| Transformation | dbt Core | Staging and analytical marts |
+| Visualization | Tableau Public | Interactive dashboards |
+| Infrastructure | Docker Engine, Docker Compose, WSL2 | Local runtime |
 
-## Dataset profile
+## Dataset Profile
 
 | Attribute | Measured value |
 |---|---:|
 | Source records | 26,794,878 |
 | Source columns | 22 |
 | Extracted CSV size | Approximately 3.61 GB |
-| ZIP archive size | Approximately 657.84 MB |
+| Source ZIP size | Approximately 657.84 MB |
 | Distinct generic drug names | 1,779 |
-| Brand and generic names equal (case-insensitive) | 18,428,364 (68.78%) |
+| Brand and generic names equal | 18,428,364 (68.78%) |
 | Brand and generic names different | 8,366,514 (31.22%) |
-| Invalid numeric values found during profiling | 0 across 10 inspected numeric columns |
+| Invalid numeric values | 0 across 10 inspected numeric columns |
 
-The source includes provider identifiers and attributes, drug brand and generic names, claims, fills, days supplied, reported drug costs, and beneficiary-related fields.
+The dataset contains provider identifiers and attributes, brand and generic drug names, claims, fills, days supplied, reported drug costs, and beneficiary-related fields.
 
-## Pipeline implementation
+## Pipeline Implementation
 
-### 1. Ingestion and storage
+### 1. Data Ingestion
 
 - Processed the source CSV in batches of 25,000 records using Python and dlt.
-- Wrote the production dataset to MinIO through its S3-compatible interface.
-- Stored the data in Apache Iceberg format and verified the latest Iceberg snapshot.
+- Loaded the data into MinIO using its S3-compatible interface.
+- Stored the dataset in Apache Iceberg format.
+- Verified the production Iceberg snapshot and ingested record count.
 
-### 2. Querying and transformation
+### 2. Querying and Transformation
 
-- Queried the Iceberg dataset with DuckDB.
-- Used dbt Core to create a staging view and three analytical marts.
-- Applied safe numeric casting and aggregate SQL calculations.
-- Exported the mart results as CSV files for Tableau.
+- Queried the Iceberg dataset using DuckDB.
+- Created a staging view using dbt Core.
+- Built three analytical data marts.
+- Used safe numeric casting and SQL aggregations.
+- Exported analytical marts to CSV for Tableau.
 
-### 3. Analytical models
+### 3. Analytical Models
 
 | Model | Purpose |
 |---|---|
-| `stg_prescriber_drug` | Standardized staging view |
-| `mart_drug_cost_analysis` | Brand/generic cost and utilization comparison |
-| `mart_provider_analysis` | State and provider-specialty analysis |
-| `mart_generic_opportunities` | Scenario-based generic cost comparison |
+| `stg_prescriber_drug` | Standardizes source data |
+| `mart_drug_cost_analysis` | Compares reported drug costs and utilization |
+| `mart_provider_analysis` | Analyzes provider state and specialty patterns |
+| `mart_generic_opportunities` | Performs threshold-filtered cost comparison scenarios |
 
-## Production metrics
+## Production Metrics
 
 | Metric | Measured result |
 |---|---:|
 | Records ingested | 26,794,878 |
 | Ingestion batches | 1,072 |
 | Ingestion duration | 129.37 minutes |
-| Average ingestion throughput | Approximately 3,452 records/second |
-| Iceberg data files | 1,072 Parquet files |
+| Average throughput | Approximately 3,452 records/second |
+| Iceberg Parquet data files | 1,072 |
 | MinIO objects | 5,366 |
 | Total MinIO object size | Approximately 1.374 GB |
-| dbt staging data tests passed | 4 |
+| dbt staging tests passed | 4 |
 | Analytical marts created | 3 |
 
-These are measured results from the completed local production run.
+These metrics represent the completed local production ingestion and transformation run.
 
-## Data quality and interpretation
+## Analytical Methodology
 
-- Suppressed or missing beneficiary values are retained as `NULL`, not converted to zero.
+### Brand and Generic Classification
+
+A source record is classified as generic when its brand name and generic name match after trimming whitespace and ignoring case.
+
+Otherwise, the record is classified as brand.
+
+This is a name-based analytical classification, not a clinical equivalence determination.
+
+### Cost Comparison
+
+For each generic drug name, the model calculates:
+
+- Total brand-classified claims.
+- Total generic-classified claims.
+- Total reported costs for both classifications.
+- Reported cost per claim for both classifications.
+
+### Scenario-Based Cost Optimization
+
+The generic opportunity model requires at least 1,000 claims in each classification.
+
+It calculates:
+
+`Estimated difference per claim = MAX(Brand cost per claim - Generic cost per claim, 0)`
+
+`Scenario estimate = Estimated difference per claim × Brand claims`
+
+The 1,000-claim threshold is an analyst-defined screening rule. It is not a statistical significance threshold.
+
+The scenario estimate is not actual savings, a causal estimate, or a recommendation to substitute medication.
+
+## Data Quality and Limitations
+
+- Missing and suppressed beneficiary values are retained as NULL rather than converted to zero.
 - Numeric fields are handled using safe casts.
-- Four staging checks validate non-null provider NPI, brand name, generic name, and total claims.
-- Brand/generic classification is based on case-insensitive equality between the source brand name and generic name.
+- Four staging tests validate non-null provider NPI, brand name, generic name, and total claims.
 - The source is aggregated at provider-drug level, not individual patient transaction level.
-- The detailed source file excludes provider-drug combinations with fewer than 11 claims because of CMS suppression rules.
-- Matching generic names do **not** prove clinical interchangeability. This analysis does not establish equivalence by strength, dosage form, or route.
-- Reported total drug cost should not be interpreted as Medicare-only payment or as an amount that can necessarily be saved.
-- The generic opportunity metric is a **scenario estimate**: the positive difference between brand and generic cost per claim multiplied by brand claims. It is not actual realized savings, a causal estimate, or a recommendation to substitute medication.
-- Results are exploratory aggregate comparisons and can be affected by differences in provider mix, drug characteristics, and claim volume.
+- The detailed CMS file excludes provider-drug combinations with fewer than 11 claims because of CMS suppression rules.
+- Matching names do not prove clinical interchangeability. Strength, dosage form, and route are not established by this analysis.
+- Reported total drug cost must not be interpreted as Medicare-only payment or guaranteed savings.
+- Cost differences can be influenced by drug characteristics, provider mix, and other factors.
 
-## Reproducing the project
+The project is intended for exploratory healthcare analytics, not clinical or financial decision-making.
 
-The public repository contains code, model definitions, exported mart CSVs, metrics, and documentation. Raw CMS data, local MinIO objects, credentials, local catalog state, and the DuckDB database are not committed.
+## Reproducing the Project
 
-A full local reproduction requires obtaining the 2023 CMS source file, starting MinIO with Docker Compose, configuring local S3/catalog credentials, running the ingestion script, setting `MEDICARE_ICEBERG_METADATA_PATH` to the resulting Iceberg metadata JSON, configuring the dbt profile, running dbt, and exporting the marts.
+The public repository includes ingestion scripts, transformation models, documentation, measured metrics, and exported analytical CSVs.
 
-Storage credentials, endpoints, catalog configuration, and dbt profiles are environment-specific; do not commit secrets.
+A full local reproduction requires:
 
-`requirements.txt` installs ingestion dependencies. `requirements-analytics.txt` contains the DuckDB/dbt analytics environment dependencies. Separate virtual environments may be used.
+1. Obtaining the 2023 CMS source dataset.
+2. Configuring MinIO and its S3 credentials.
+3. Configuring the local SQLite catalog and Iceberg storage.
+4. Running the Python/dlt ingestion pipeline.
+5. Setting `MEDICARE_ICEBERG_METADATA_PATH` to the resulting Iceberg metadata JSON.
+6. Configuring the local dbt profile for DuckDB and MinIO access.
+7. Running dbt models and tests.
+8. Exporting the analytical marts.
+9. Connecting the exported CSVs to Tableau and refreshing the published workbook.
 
-## Repository structure
+The ingestion and analytics environments are separated:
+
+- `requirements-ingestion.txt` contains ingestion dependencies.
+- `requirements-analytics.txt` contains DuckDB and dbt dependencies.
+
+The root `requirements.txt` references the ingestion requirements.
+
+Credentials, local profiles, raw data, local catalog state, and DuckDB databases are not committed.
+
+## Repository Structure
 
 ```text
 medintel/
-├── dashboard/data/           # Exported analytical mart CSVs
-├── dbt/medicare_analytics/   # dbt models and mart export script
-├── docs/                     # Architecture documentation
-├── metrics/                  # Measured project metrics
-├── reports/                  # Dataset quality profile
-├── src/                      # Ingestion and analysis scripts
+├── dashboard/
+│   └── data/
+│       ├── mart_drug_cost_analysis.csv
+│       ├── mart_generic_opportunities.csv
+│       └── mart_provider_analysis.csv
+├── dbt/
+│   └── medicare_analytics/
+│       ├── models/
+│       │   ├── staging/
+│       │   └── marts/
+│       ├── export_marts.py
+│       ├── dbt_project.yml
+│       └── README.md
+├── docs/
+│   └── architecture.md
+├── metrics/
+│   └── project_metrics.csv
+├── reports/
+│   └── data_quality_profile.json
+├── src/
+│   ├── analysis/
+│   └── ingestion/
 ├── requirements.txt
 ├── requirements-ingestion.txt
 ├── requirements-analytics.txt
 └── README.md
 ```
 
-Raw source data, local state, credentials, and runtime databases are intentionally excluded from the public repository.
+## Future Improvements
 
-## Future improvements
-
-- Add automated data-quality checks for each analytical mart.
-- Improve brand/generic classification using drug-level attributes such as strength and dosage form.
-- Add sample-size thresholds and uncertainty indicators to cost comparisons.
-- Automate ingestion, transformation, and dashboard refresh workflows.
+- Automate ingestion and transformation workflows.
+- Improve drug classification using strength and dosage-form attributes.
+- Add more comprehensive mart-level data-quality checks.
+- Introduce additional analytical dimensions and dashboard filters.
 
 ## Disclaimer
 
@@ -173,4 +239,4 @@ This project is for educational and analytical purposes. It is not medical advic
 
 **Abinaya N.**
 
-Healthcare Data Analytics · Data Engineering · SQL · Python · Tableau
+Healthcare Analytics | Data Engineering | SQL | Python | Tableau
