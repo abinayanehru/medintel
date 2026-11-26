@@ -1,65 +1,58 @@
-# Medicare Part D Lakehouse Architecture
 
-## Architecture Overview
+# MedIntel — Lakehouse Architecture
 
-The project follows a lakehouse architecture that combines object storage, open table formats, analytical querying, SQL transformations, and business intelligence.
+## Overview
 
-## Data Flow
+MedIntel is a local end-to-end analytics lakehouse for the 2023 CMS Medicare Part D Prescribers by Provider and Drug dataset.
 
-1. **Source:** 2023 CMS Medicare Part D Prescribers by Provider and Drug CSV.
+## Data flow
+
+1. **Source:** CMS 2023 provider-and-drug CSV.
 2. **Ingestion:** Python and dlt process the source in batches.
-3. **Object Storage:** MinIO stores the ingested data.
-4. **Table Format:** Apache Iceberg manages the production dataset.
-5. **Catalog:** SQLite maintains local catalog metadata.
-6. **Query Engine:** DuckDB queries the Iceberg table.
-7. **Transformation:** dbt Core builds staging and analytical models.
-8. **Visualization:** Tableau Public presents the aggregated analytical outputs.
+3. **Object storage:** MinIO stores the ingested objects.
+4. **Table format:** Apache Iceberg manages the production table and snapshots.
+5. **Catalog:** SQLite stores local catalog metadata.
+6. **Query engine:** DuckDB queries the Iceberg table.
+7. **Transformation:** dbt Core builds staging and analytical marts.
+8. **Export:** Python exports mart tables to CSV.
+9. **Visualization:** Tableau Public presents the analytical views.
 
-## Architecture Diagram
+## Architecture diagram
 
 ```mermaid
 flowchart TD
-    A["CMS 2023 CSV Dataset"]
-    B["Python + dlt"]
-    C["MinIO Object Storage"]
-    D["Apache Iceberg"]
-    E["SQLite Catalog"]
-    F["DuckDB"]
-    G["dbt Core"]
-    H["Staging View"]
-    I["Analytical Mart Tables"]
-    J["CSV Exports"]
-    K["Tableau Public"]
-
-    A --> B
-    B --> C
-    C --> D
-    E --> D
-    D --> F
-    F --> G
-    G --> H
-    H --> I
-    I --> J
-    J --> K
+    A["CMS 2023 CSV"] --> B["Python + dlt"]
+    B --> C["MinIO Object Storage"]
+    C --> D["Apache Iceberg"]
+    E["SQLite Catalog"] --- D
+    D --> F["DuckDB"]
+    F --> G["dbt Core"]
+    G --> H["Staging View"]
+    H --> I["Analytical Marts"]
+    I --> J["CSV Exports"]
+    J --> K["Tableau Public"]
 ```
 
-## Analytical Models
+## Analytical models
 
 - `stg_prescriber_drug`
 - `mart_drug_cost_analysis`
 - `mart_provider_analysis`
 - `mart_generic_opportunities`
 
-## Deployment Environment
+## Deployment environment
 
-- Windows 11
-- Ubuntu on WSL2
+- Windows 11 with Ubuntu on WSL2
 - Docker Engine and Docker Compose
-- Python 3.11.9
-- DuckDB 2.0.1
-- dbt Core 1.12.7
 - MinIO S3-compatible object storage
+- Python 3.11.9 for ingestion
+- DuckDB 2.0.1
+- dbt Core 1.12.7 with dbt-duckdb 1.11.1
 
-## Design Considerations
+## Configuration note
 
-The project uses local infrastructure and open-source technologies rather than paid cloud services. The production dataset is stored in MinIO as Iceberg data, while analytical models are materialized in DuckDB.
+The staging model reads its Iceberg metadata JSON path from `MEDICARE_ICEBERG_METADATA_PATH`. Set this environment variable to the metadata file for the table created by the local ingestion run.
+
+Do not hardcode local credentials or machine-specific paths in the repository.
+
+The S3 endpoint, credentials, catalog settings, and dbt profile are environment-specific and must be configured locally.
